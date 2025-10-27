@@ -99,4 +99,21 @@ class SarprasClient
         $res->throw();
         return $res->json();
     }
+
+    public function masterFaculties(array $q = []): array
+    {
+        return $this->client()->get("{$this->base}/master/faculties", $q)->throw()->json();
+    }
+    public function masterDepartments(array $q = []): array
+    {
+        return $this->client()->get("{$this->base}/master/departments", $q)->throw()->json();
+    }
+    public function masterAssetFunctions(array $q = []): array
+    {
+        return $this->client()->get("{$this->base}/master/asset-functions", $q)->throw()->json();
+    }
+    public function masterFundingSources(array $q = []): array
+    {
+        return $this->client()->get("{$this->base}/master/funding-sources", $q)->throw()->json();
+    }
 }

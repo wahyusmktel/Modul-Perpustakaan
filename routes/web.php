@@ -39,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/proxy/master/buildings',    [SarprasProxyController::class, 'buildings'])->name('proxy.master.buildings');
     Route::get('/proxy/master/rooms',        [SarprasProxyController::class, 'rooms'])->name('proxy.master.rooms');
     Route::get('/proxy/master/persons',      [SarprasProxyController::class, 'persons'])->name('proxy.master.persons');
+
+    Route::get('/proxy/master/faculties',       [SarprasProxyController::class, 'faculties'])->name('proxy.master.faculties');
+    Route::get('/proxy/master/departments',     [SarprasProxyController::class, 'departments'])->name('proxy.master.departments');
+    Route::get('/proxy/master/asset-functions', [SarprasProxyController::class, 'assetFunctions'])->name('proxy.master.asset-functions');
+    Route::get('/proxy/master/funding-sources', [SarprasProxyController::class, 'fundingSources'])->name('proxy.master.funding-sources');
 });
 
 require __DIR__ . '/auth.php';

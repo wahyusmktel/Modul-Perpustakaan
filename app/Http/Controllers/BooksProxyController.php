@@ -84,11 +84,15 @@ class BooksProxyController extends Controller
             'name'                => 'required|string|max:255',
             'purchase_year'       => 'required|digits:4|integer|min:1900',
             'institution_id'      => 'required|integer',
-            'building_id'         => 'nullable|integer',
-            'room_id'             => 'nullable|integer',
-            'person_in_charge_id' => 'nullable|integer',
-            'purchase_cost'       => 'nullable|numeric|min:0',
-            'status'              => 'nullable|in:Aktif,Dipinjam,Maintenance,Rusak,Disposed',
+            'building_id'         => 'required|integer',
+            'room_id'             => 'required|integer',
+            'faculty_id'          => 'required|integer',
+            'department_id'       => 'required|integer',
+            'person_in_charge_id' => 'required|integer',
+            'asset_function_id'   => 'required|integer',
+            'funding_source_id'   => 'required|integer',
+            'purchase_cost'       => 'required|numeric|min:0',
+            'status'              => 'nullable|string',
         ]);
 
         // Lempar ke Sarpras

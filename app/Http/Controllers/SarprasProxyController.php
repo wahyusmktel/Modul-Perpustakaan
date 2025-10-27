@@ -46,4 +46,29 @@ class SarprasProxyController extends Controller
         $data = $api->masterPersons(['q' => $q, 'page' => $page, 'per_page' => 20]);
         return response()->json($data);
     }
+
+    public function faculties(Request $request, SarprasClient $api)
+    {
+        $q = $request->get('term', $request->get('q'));
+        $page = (int) $request->get('page', 1);
+        return response()->json($api->masterFaculties(['q' => $q, 'page' => $page, 'per_page' => 20]));
+    }
+    public function departments(Request $request, SarprasClient $api)
+    {
+        $q = $request->get('term', $request->get('q'));
+        $page = (int) $request->get('page', 1);
+        return response()->json($api->masterDepartments(['q' => $q, 'page' => $page, 'per_page' => 20]));
+    }
+    public function assetFunctions(Request $request, SarprasClient $api)
+    {
+        $q = $request->get('term', $request->get('q'));
+        $page = (int) $request->get('page', 1);
+        return response()->json($api->masterAssetFunctions(['q' => $q, 'page' => $page, 'per_page' => 20]));
+    }
+    public function fundingSources(Request $request, SarprasClient $api)
+    {
+        $q = $request->get('term', $request->get('q'));
+        $page = (int) $request->get('page', 1);
+        return response()->json($api->masterFundingSources(['q' => $q, 'page' => $page, 'per_page' => 20]));
+    }
 }

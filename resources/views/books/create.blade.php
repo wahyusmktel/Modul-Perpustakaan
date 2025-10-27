@@ -87,6 +87,38 @@
                                     <div class="text-xs text-rose-500 mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Fakultas</label>
+                                <select id="faculty_id" name="faculty_id" class="select2 w-full" required></select>
+                                @error('faculty_id')
+                                    <div class="text-xs text-rose-500 mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Prodi/Unit</label>
+                                <select id="department_id" name="department_id" class="select2 w-full"
+                                    required></select>
+                                @error('department_id')
+                                    <div class="text-xs text-rose-500 mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Fungsi Barang</label>
+                                <select id="asset_function_id" name="asset_function_id" class="select2 w-full"
+                                    required></select>
+                                @error('asset_function_id')
+                                    <div class="text-xs text-rose-500 mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Jenis
+                                    Pendanaan</label>
+                                <select id="funding_source_id" name="funding_source_id" class="select2 w-full"
+                                    required></select>
+                                @error('funding_source_id')
+                                    <div class="text-xs text-rose-500 mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
                             <div class="md:col-span-2">
                                 <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Harga (Rp)</label>
                                 <input name="purchase_cost" value="{{ old('purchase_cost') }}" type="number"
@@ -126,9 +158,7 @@
                                     q: params.term || '',
                                     page: params.page || 1
                                 };
-                                if (typeof extraDataFn === 'function') {
-                                    Object.assign(base, extraDataFn());
-                                }
+                                if (typeof extraDataFn === 'function') Object.assign(base, extraDataFn());
                                 return base;
                             },
                             processResults: function(data) {
@@ -145,28 +175,28 @@
                     });
                 }
 
-                // Master data umum
+                // sudah ada:
                 initSelect2('#institution_id', "{{ route('proxy.master.institutions') }}");
                 initSelect2('#person_in_charge_id', "{{ route('proxy.master.persons') }}");
                 initSelect2('#building_id', "{{ route('proxy.master.buildings') }}");
-
-                // ROOM: tidak menunggu building — langsung bisa cari semua ruangan
-                // Jika suatu saat building dipilih dan backend sudah punya relasi, param building_id akan ikut terkirim.
-                function roomsExtra() {
+                initSelect2('#room_id', "{{ route('proxy.master.rooms') }}", () => {
                     const bid = $('#building_id').val();
                     return bid ? {
                         building_id: bid
                     } : {};
-                }
-                initSelect2('#room_id', "{{ route('proxy.master.rooms') }}", roomsExtra);
-
-                // Jika building berubah, cukup trigger refresh data di Room (tanpa destroy)
-                $('#building_id').on('change', function() {
-                    // clear pilihan room agar user pilih lagi sesuai building (kalau filter tersedia)
-                    $('#room_id').val(null).trigger('change');
                 });
+
+                // NEW:
+                initSelect2('#faculty_id', "{{ route('proxy.master.faculties') }}");
+                initSelect2('#department_id', "{{ route('proxy.master.departments') }}");
+                initSelect2('#asset_function_id', "{{ route('proxy.master.asset-functions') }}");
+                initSelect2('#funding_source_id', "{{ route('proxy.master.funding-sources') }}");
+
+                // Optional: kalau mau cascade department by faculty nanti, kita bisa kirim faculty_id ke proxy
+                // (butuh modif endpoint Sarpras departments untuk terima faculty_id).
             });
         </script>
     @endpush
+
 
 </x-app-layout>
