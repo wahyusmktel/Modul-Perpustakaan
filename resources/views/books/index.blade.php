@@ -9,27 +9,75 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
             @if (session('success'))
-                <div
-                    class="px-3 py-2 rounded-md text-sm bg-emerald-50 text-emerald-700">
+                <div class="px-3 py-2 rounded-md text-sm bg-emerald-50 text-emerald-700">
                     {{ session('success') }}
                 </div>
             @endif
             @if (session('error'))
-                <div
-                    class="px-3 py-2 rounded-md text-sm bg-rose-50 text-rose-700">
+                <div class="px-3 py-2 rounded-md text-sm bg-rose-50 text-rose-700">
                     {{ session('error') }}
                 </div>
             @endif
 
             <div class="bg-white shadow-sm sm:rounded-lg p-6">
-                <form method="GET" action="{{ route('books.index') }}" class="mb-4 flex flex-wrap items-center gap-2">
-                    <input type="text" name="q" value="{{ $q }}"
-                        placeholder="Cari nama/kode buku..."
-                        class="w-full md:w-72 rounded-md border-gray-300">
-                    <button
-                        class="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm">Cari</button>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        {{-- kosong / info kecil opsional --}}
+                    </div>
+                    <a href="{{ route('books.create') }}"
+                        class="inline-flex items-center px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm">
+                        + Tambah Buku
+                    </a>
+                </div>
 
-                    <div class="ms-auto flex items-center gap-2">
+                <form method="GET" action="{{ route('books.index') }}"
+                    class="mb-4 grid grid-cols-1 md:grid-cols-5 gap-2 items-start">
+                    {{-- Pencarian --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Pencarian</label>
+                        <input type="text" name="q" value="{{ $q }}"
+                            placeholder="Cari nama/kode buku..."
+                            class="w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900">
+                    </div>
+
+                    {{-- Tahun (Select2) --}}
+                    <div>
+                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Tahun</label>
+                        <select name="year"
+                            class="select2 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900"
+                            data-placeholder="Semua Tahun">
+                            <option value="">Semua Tahun</option>
+                            @foreach ($years as $y)
+                                <option value="{{ $y }}" @selected((string) $year === (string) $y)>{{ $y }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Status (Select2 multiple) --}}
+                    <div>
+                        <label class="block text-xs text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                        <select name="status[]" multiple
+                            class="select2 w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900"
+                            data-placeholder="Semua Status">
+                            @foreach ($allStatuses as $st)
+                                <option value="{{ $st }}" @selected(collect($statuses)->contains($st))>{{ $st }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Tombol --}}
+                    <div class="flex gap-2 items-end">
+                        <button
+                            class="px-3 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm">Filter</button>
+                        <a href="{{ route('books.index') }}"
+                            class="px-3 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-white text-sm">Reset</a>
+                    </div>
+
+                    {{-- Export di baris bawah, full width --}}
+                    <div class="md:col-span-5 flex items-center gap-2 mt-2">
+                        <div class="ms-auto"></div>
                         <a href="{{ route('books.export.excel', request()->query()) }}"
                             class="inline-flex items-center px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm">⬇️
                             Export Excel</a>
@@ -67,18 +115,12 @@
                                         @php
                                             $s = $b['status'] ?? '-';
                                             $cls = match ($s) {
-                                                'Aktif'
-                                                    => 'bg-green-100 text-green-800',
-                                                'Dipinjam'
-                                                    => 'bg-blue-100 text-blue-800',
-                                                'Maintenance'
-                                                    => 'bg-amber-100 text-amber-800',
-                                                'Rusak'
-                                                    => 'bg-rose-100 text-rose-800',
-                                                'Disposed'
-                                                    => 'bg-gray-200 text-gray-800',
-                                                default
-                                                    => 'bg-slate-100 text-slate-800',
+                                                'Aktif' => 'bg-green-100 text-green-800',
+                                                'Dipinjam' => 'bg-blue-100 text-blue-800',
+                                                'Maintenance' => 'bg-amber-100 text-amber-800',
+                                                'Rusak' => 'bg-rose-100 text-rose-800',
+                                                'Disposed' => 'bg-gray-200 text-gray-800',
+                                                default => 'bg-slate-100 text-slate-800',
                                             };
                                         @endphp
                                         <span

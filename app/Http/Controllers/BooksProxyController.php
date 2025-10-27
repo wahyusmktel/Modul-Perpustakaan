@@ -14,20 +14,31 @@ class BooksProxyController extends Controller
 {
     public function index(Request $request, SarprasClient $api)
     {
-        // paksa per_page = 10
-        $query = array_merge($request->all(), ['per_page' => 10]);
+        // Ambil filter
+        $q      = (string) $request->get('q', '');
+        $year   = $request->get('year');                 // string/int atau null
+        $status = (array) $request->get('status', []);   // array
 
-        // ambil dari API Sarpras
+        // Paksa per_page = 10
+        $query = array_merge($request->all(), [
+            'per_page' => 10,
+        ]);
+        // Pastikan status[] dikirim sebagai array (bukan string)
+        if (!empty($status)) {
+            $query['status'] = $status;
+        }
+
+        // Ambil dari API Sarpras
         $resp  = $api->listBooks($query);
 
-        // bentuk paginator lokal dari JSON API
+        // Bentuk paginator lokal dari JSON API (seperti sebelumnya)
         $data = collect($resp['data'] ?? []);
         $meta = $resp['meta'] ?? [];
         $currentPage = (int)($meta['current_page'] ?? 1);
         $perPage     = (int)($meta['per_page'] ?? 10);
         $total       = (int)($meta['total'] ?? $data->count());
 
-        $paginator = new LengthAwarePaginator(
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator(
             $data,
             $total,
             $perPage,
@@ -35,10 +46,19 @@ class BooksProxyController extends Controller
             ['path' => route('books.index'), 'query' => $request->query()]
         );
 
+        // Opsi Tahun & Status (sederhana; bisa nanti diganti dari API kalau perlu)
+        $currentYear = (int) now()->year;
+        $years = range($currentYear, 1990); // desc
+        $allStatuses = ['Aktif', 'Dipinjam', 'Maintenance', 'Rusak', 'Disposed'];
+
         return view('books.index', [
-            'books'     => $data,
-            'paginator' => $paginator,
-            'q'         => (string)$request->get('q', ''),
+            'books'      => $data,
+            'paginator'  => $paginator,
+            'q'          => $q,
+            'year'       => $year,
+            'statuses'   => $status,
+            'years'      => $years,
+            'allStatuses' => $allStatuses,
         ]);
     }
 
@@ -48,20 +68,35 @@ class BooksProxyController extends Controller
         return view('books.show', compact('book'));
     }
 
+    public function create()
+    {
+        // Sederhana dulu: form manual (ID referensi diisi angka).
+        // Next step bisa kita tarik master data dari Sarpras lewat endpoint khusus.
+        $allStatuses = ['Aktif', 'Dipinjam', 'Maintenance', 'Rusak', 'Disposed'];
+        $years = range((int)now()->year, 1990);
+        return view('books.create', compact('allStatuses', 'years'));
+    }
+
     public function store(Request $request, SarprasClient $api)
     {
+        // Minimal payload yang diterima API Sarpras
         $payload = $request->validate([
-            'name'               => 'required|string|max:255',
-            'purchase_year'      => 'required|digits:4',
-            'institution_id'     => 'required|integer',
-            'building_id'        => 'nullable|integer',
-            'room_id'            => 'nullable|integer',
+            'name'                => 'required|string|max:255',
+            'purchase_year'       => 'required|digits:4|integer|min:1900',
+            'institution_id'      => 'required|integer',
+            'building_id'         => 'nullable|integer',
+            'room_id'             => 'nullable|integer',
             'person_in_charge_id' => 'nullable|integer',
-            'purchase_cost'      => 'nullable|numeric',
-            'status'             => 'nullable|string',
+            'purchase_cost'       => 'nullable|numeric|min:0',
+            'status'              => 'nullable|in:Aktif,Dipinjam,Maintenance,Rusak,Disposed',
         ]);
+
+        // Lempar ke Sarpras
         $api->createBook($payload);
-        return redirect()->route('books.index')->with('success', 'Buku dibuat (Sarpras).');
+
+        return redirect()
+            ->route('books.index', ['q' => $payload['name']])
+            ->with('success', 'Buku berhasil dibuat di Sarpras.');
     }
 
     public function update(int $id, Request $request, SarprasClient $api)

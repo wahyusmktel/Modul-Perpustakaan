@@ -71,4 +71,32 @@ class SarprasClient
         $res->throw();
         return false;
     }
+
+    public function masterInstitutions(array $query = []): array
+    {
+        $res = $this->client()->get("{$this->base}/master/institutions", $query);
+        $res->throw();
+        return $res->json();
+    }
+
+    public function masterBuildings(array $query = []): array
+    {
+        $res = $this->client()->get("{$this->base}/master/buildings", $query);
+        $res->throw();
+        return $res->json();
+    }
+
+    public function masterRooms(array $query = []): array
+    {
+        $res = $this->client()->get("{$this->base}/master/rooms", $query);
+        $res->throw();
+        return $res->json();
+    }
+
+    public function masterPersons(array $query = []): array
+    {
+        $res = $this->client()->get("{$this->base}/master/persons", $query);
+        $res->throw();
+        return $res->json();
+    }
 }

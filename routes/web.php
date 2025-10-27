@@ -3,6 +3,8 @@
 use App\Http\Controllers\BooksProxyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SarprasHealthController;
+use App\Http\Controllers\SarprasProxyController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -18,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/books',        [BooksProxyController::class, 'index'])->name('books.index');
+    Route::get('/books/create',        [BooksProxyController::class, 'create'])->name('books.create');
     Route::get('/books/{id}',   [BooksProxyController::class, 'show'])->name('books.show');
 
     // nanti tombol tambah/update/delete bisa ditaruh di sini juga
@@ -28,6 +31,14 @@ Route::middleware(['auth'])->group(function () {
     // export
     Route::get('/books/export/excel', [BooksProxyController::class, 'exportExcel'])->name('books.export.excel');
     Route::get('/books/export/pdf',   [BooksProxyController::class, 'exportPdf'])->name('books.export.pdf');
+
+    // Health Check
+    Route::get('/health/sarpras', [SarprasHealthController::class, 'show'])->name('health.sarpras.show');
+
+    Route::get('/proxy/master/institutions', [SarprasProxyController::class, 'institutions'])->name('proxy.master.institutions');
+    Route::get('/proxy/master/buildings',    [SarprasProxyController::class, 'buildings'])->name('proxy.master.buildings');
+    Route::get('/proxy/master/rooms',        [SarprasProxyController::class, 'rooms'])->name('proxy.master.rooms');
+    Route::get('/proxy/master/persons',      [SarprasProxyController::class, 'persons'])->name('proxy.master.persons');
 });
 
 require __DIR__ . '/auth.php';
