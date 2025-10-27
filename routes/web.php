@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SarprasHealthController;
 use App\Http\Controllers\SarprasProxyController;
+use App\Http\Controllers\MemberController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -44,6 +45,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/proxy/master/departments',     [SarprasProxyController::class, 'departments'])->name('proxy.master.departments');
     Route::get('/proxy/master/asset-functions', [SarprasProxyController::class, 'assetFunctions'])->name('proxy.master.asset-functions');
     Route::get('/proxy/master/funding-sources', [SarprasProxyController::class, 'fundingSources'])->name('proxy.master.funding-sources');
+
+    Route::get('/members',          [MemberController::class, 'index'])->name('members.index');
+    Route::get('/members/create',   [MemberController::class, 'create'])->name('members.create');
+    Route::post('/members',          [MemberController::class, 'store'])->name('members.store');
+    Route::get('/members/{member}/edit', [MemberController::class, 'edit'])->name('members.edit');
+    Route::patch('/members/{member}', [MemberController::class, 'update'])->name('members.update');
+    Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
 });
 
 require __DIR__ . '/auth.php';
