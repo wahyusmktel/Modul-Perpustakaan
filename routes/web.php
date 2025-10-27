@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SarprasHealthController;
 use App\Http\Controllers\SarprasProxyController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MemberImportController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -52,6 +53,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/members/{member}/edit', [MemberController::class, 'edit'])->name('members.edit');
     Route::patch('/members/{member}', [MemberController::class, 'update'])->name('members.update');
     Route::delete('/members/{member}', [MemberController::class, 'destroy'])->name('members.destroy');
+
+    Route::get('/members/import',           [MemberImportController::class, 'form'])->name('members.import.form');
+    Route::post('/members/import',           [MemberImportController::class, 'import'])->name('members.import.handle');
+    Route::get('/members/import/template',  [MemberImportController::class, 'template'])->name('members.import.template');
 });
 
 require __DIR__ . '/auth.php';

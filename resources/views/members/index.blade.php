@@ -32,6 +32,10 @@
                         class="inline-flex items-center px-3 py-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-sm">
                         + Tambah Anggota
                     </a>
+                    <a href="{{ route('members.import.form') }}"
+                        class="inline-flex items-center px-3 py-2 rounded-md bg-sky-600 hover:bg-sky-700 text-white text-sm">
+                        ⬆️ Import Excel
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto">
