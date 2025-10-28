@@ -7,6 +7,8 @@ use App\Http\Controllers\SarprasHealthController;
 use App\Http\Controllers\SarprasProxyController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportController;
+use App\Http\Controllers\BookSyncController;
+use App\Http\Controllers\CirculationController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -57,6 +59,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/members/import',           [MemberImportController::class, 'form'])->name('members.import.form');
     Route::post('/members/import',           [MemberImportController::class, 'import'])->name('members.import.handle');
     Route::get('/members/import/template',  [MemberImportController::class, 'template'])->name('members.import.template');
+
+    Route::get('/admin/books/sync',     [BookSyncController::class, 'index'])->name('books.sync.index');
+    Route::post('/admin/books/sync/run', [BookSyncController::class, 'run'])->name('books.sync.run');
+
+    Route::get('/circulation/loan',          [CirculationController::class, 'loanForm'])->name('circulation.loan.form');
+    Route::post('/circulation/loan/add-item', [CirculationController::class, 'loanAddItem'])->name('circulation.loan.addItem');
+    Route::post('/circulation/loan/commit',   [CirculationController::class, 'loanCommit'])->name('circulation.loan.commit');
+    Route::post('/circulation/loan/reset',    [CirculationController::class, 'loanReset'])->name('circulation.loan.reset');
+
+    Route::get('/circulation/return',        [CirculationController::class, 'returnForm'])->name('circulation.return.form');
+    Route::post('/circulation/return/process', [CirculationController::class, 'returnProcess'])->name('circulation.return.process');
 });
 
 require __DIR__ . '/auth.php';
