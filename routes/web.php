@@ -9,6 +9,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberImportController;
 use App\Http\Controllers\BookSyncController;
 use App\Http\Controllers\CirculationController;
+use App\Http\Controllers\ReservationController;
 
 Route::get('/', function () {
     return redirect()->route('books.index');
@@ -70,6 +71,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/circulation/return',        [CirculationController::class, 'returnForm'])->name('circulation.return.form');
     Route::post('/circulation/return/process', [CirculationController::class, 'returnProcess'])->name('circulation.return.process');
+    Route::post('/circulation/loan/{loan}/renew', [CirculationController::class, 'loanRenew'])
+        ->name('circulation.loan.renew');
+
+    // Reservasi
+    Route::get('/reservations',            [ReservationController::class, 'index'])->name('reservations.index');
+    Route::post('/reservations',            [ReservationController::class, 'store'])->name('reservations.store');         // member + book_id
+    Route::post('/reservations/{res}/ready', [ReservationController::class, 'markReady'])->name('reservations.ready');    // staff: tandai siap
+    Route::post('/reservations/{res}/pick', [ReservationController::class, 'markPicked'])->name('reservations.pick');    // staff: diambil
+    Route::post('/reservations/{res}/cancel', [ReservationController::class, 'cancel'])->name('reservations.cancel');
 });
 
 require __DIR__ . '/auth.php';

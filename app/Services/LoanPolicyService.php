@@ -30,4 +30,14 @@ class LoanPolicyService
     {
         return (int) config('library.policy.max_items', 3);
     }
+
+    public function renewMax(): int
+    {
+        return (int) config('library.policy.renew_max', 2);
+    }
+
+    public function readyDays(): int
+    {
+        return (int) config('library.policy.reservation_ready_days', 2);
+    }
 }
